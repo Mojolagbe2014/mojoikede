@@ -15,7 +15,7 @@ if(isset($_SESSION['msg'])){ $msg = $_SESSION['msg'];}
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Dashboard - NST Blog</title>
+<title>Dashboard - Custom Advert Manager</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -44,10 +44,9 @@ if(isset($_SESSION['msg'])){ $msg = $_SESSION['msg'];}
             <!-- /widget-header -->
             <div class="widget-content">
               <div class="shortcuts"> 
-                  <a href="posts" class="shortcut"><i class="shortcut-icon icon-list-alt"></i><span class="shortcut-label">Posts</span> </a>
-                  <a href="comments" class="shortcut"><i class="shortcut-icon icon-comments"></i><span class="shortcut-label">Comments</span> </a>
-                  <a href="new-post" class="shortcut"><i class="shortcut-icon icon-upload-alt"></i> <span class="shortcut-label">Add Post</span> </a>
-                  <a href="media" class="shortcut"> <i class="shortcut-icon icon-picture"></i><span class="shortcut-label">Media</span> </a>
+                  <a href="advert-manager" class="shortcut"><i class="shortcut-icon icon-picture"></i><span class="shortcut-label">Add Advert</span> </a>
+                  <a href="advert-manager" class="shortcut"><i class="shortcut-icon icon-camera-retro"></i><span class="shortcut-label">Manage Adverts</span> </a>
+                  <a href="edit-profile" class="shortcut"><i class="shortcut-icon icon-user"></i> <span class="shortcut-label">Profile</span> </a>
               </div>
               <!-- /shortcuts --> 
             </div>

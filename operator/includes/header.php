@@ -2,7 +2,7 @@
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container"> <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span
-                    class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span> </a><a class="brand" href="index.html">NST Blog</a>
+                    class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span> </a><a class="brand" href="">Custom Advert Manager</a>
       <div class="nav-collapse">
         <ul class="nav pull-right">
           <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
@@ -33,32 +33,16 @@
     <div class="container">
       <ul class="mainnav">
         <li><a href="dashboard"><i class="icon-dashboard"></i><span>Dashboard</span> </a> </li>
-        <li class="dropdown"><a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-comment"></i><span>Posts</span><b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="new-post">New Post</a></li>
-            <li><a href="comments">Comments</a></li>
-            <li><a href="posts">Posts</a></li>
-          </ul>
-        </li>
-        <li><a href="menu"><i class="icon-list"></i><span>Menus</span> </a>
-        </li>
-        <li class="dropdown"><a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-indent-left"></i><span>Categories</span><b class="caret"></b></a>
+        <li class="dropdown"><a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-camera"></i><span>Adverts</span><b class="caret"></b></a>
             <ul class="dropdown-menu">
-               <li><a href="new-category">New Category</a></li>
-               <li><a href="categories">All Categories</a></li>
+               <li><a href="advert-manager">Add Advert</a></li>
+               <li><a href="advert-manager">Manage Adverts</a></li>
             </ul>
         </li>
-        <li class="dropdown"><a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-camera"></i><span>Media</span><b class="caret"></b></a>
-            <ul class="dropdown-menu">
-               <li><a href="new-media">Add New Media</a></li>
-               <li><a href="media">All Media</a></li>
-            </ul>
-        </li>
-        <?php if(isset($_SESSION['USERTYPE'])&& $_SESSION['USERTYPE']=='Admin') { echo '<li class="dropdown"><a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-wrench"></i><span>Settings</span> <b class="caret"></b></a>
+        <?php if(isset($_SESSION['USERTYPE'])&& $_SESSION['USERTYPE']=='Admin') { echo '<li class="dropdown"><a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-group"></i><span>Users</span> <b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li><a href="users">Users</a></li>
             <li><a href="new-user">Add User</a></li>
-            <li><a href="advert-manager">Manage Adverts</a></li>
           </ul>
         </li>'; }
         ?>

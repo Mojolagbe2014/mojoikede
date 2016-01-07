@@ -7,7 +7,7 @@ define("DB_PASSWORD","Karobuto2013");
 define("DB_SERVER","localhost");
 */
 define("SITE_URL","http://localhost/advert/");
-define("DB_NAME","customBlog");
+define("DB_NAME","advert_manager");
 define("DB_USER","root");
 define("DB_PASSWORD","");
 define("DB_SERVER","localhost");
