@@ -15,3 +15,5 @@ define("__ROOT__",dirname(dirname(__FILE__)));
 define("MEDIA_PATH", __ROOT__.'/media/');
 define("CLASSES_PATH", __ROOT__.'/classes/');
 define("DB_CONFIG_FILE", __ROOT__.'/DbConfig/Database.php');
+define("MEDIA_FILES_PATH", __ROOT__.'/media/');
+define("MEDIA_FILES_PATH1", SITE_URL.'/media/');

@@ -65,36 +65,41 @@
 <script type="text/javascript" src="jquery.easing.1.3.js"></script>
 <script src="jquery.transform-0.8.0.min.js"></script>
 <script src="jquery.banner.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        $(function() {
-            //we want 4 steps/slides for the second banner:
-            $('#ca_banner2').banner({
-                steps : [
-                        [
-                                //1 step:
-                                [{"to" : "2"}, {"effect": "slideOutTop-slideInTop"}],
-                                [{"to" : "2"}, {"effect": "slideOutTop-slideInTop"}]
-                        ],
-                        [
-                                //2 step:
-                                [{"to" : "1"}, {"effect": "slideOutRight-slideInRight"}],
-                                [{"to" : "1"}, {"effect": "slideOutLeft-slideInLeft"}],
-                        ],
-                        [
-                                //3 step:
-                                [{"to" : "2"}, {"effect": "slideOutLeft-slideInLeft"}],
-                                [{"to" : "2"}, {"effect": "slideOutRight-slideInRight"}]
-                        ],
-                        [
-                                //4 step:
-                                [{"to" : "1"}, {"effect":"zoomOutRotated-zoomInRotated"}],
-                                [{"to" : "1"}, {"effect": "zoomOutRotated-zoomInRotated"}],
-                        ]
-                ],
-                total_steps	: 4,
-                speed 		: 2000
-            });
+<script type="text/javascript">
+    $(function() {
+        //we want 4 steps/slides for the second banner:
+        $('#ca_banner2').banner({
+            steps : [
+                    [
+                            //1 step:
+                            [{"to" : "2"}, {"effect": "slideOutTop-slideInTop"}],
+                            [{"to" : "2"}, {"effect": "slideOutTop-slideInTop"}]
+                    ],
+                    [
+                            //2 step:
+                            [{"to" : "1"}, {"effect": "slideOutRight-slideInRight"}],
+                            [{"to" : "1"}, {"effect": "slideOutLeft-slideInLeft"}],
+                    ],
+                    [
+                            //3 step:
+                            [{"to" : "2"}, {"effect": "slideOutLeft-slideInLeft"}],
+                            [{"to" : "2"}, {"effect": "slideOutRight-slideInRight"}]
+                    ],
+                    [
+                            //4 step:
+                            [{"to" : "1"}, {"effect":"zoomOutRotated-zoomInRotated"}],
+                            [{"to" : "1"}, {}],
+                    ],
+//                        [
+//                                //4 step:
+//                                [{"to" : "1"}, {"effect":"zoomOutRotated-zoomInRotated"}],
+//                                [{"to" : "1"}, {"effect": "zoomOutRotated-zoomInRotated"}],
+//                        ]
+            ],
+            total_steps	: 4,
+            speed 		: 2000
         });
-    </script>
+    });
+</script>
 </body>
 </html>

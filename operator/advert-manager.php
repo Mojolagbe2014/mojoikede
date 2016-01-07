@@ -12,12 +12,9 @@ $errorArr = array(); //Array of errors
 $dbObj = new Database(); //create database object
 $advertObj = new Advert();// instantiate advert class
 
-$sitePost = new Post(); //Instantiate post class
-$postComment = new Comment(); //Create comment object
-
 //Advert Addition Handler
 if(filter_input(INPUT_POST, "submit")!==NULL && filter_input(INPUT_POST, "actionField")=='add'){
-    $postVars = ['name','link','content','size', 'type', 'position', 'location', 'follow', 'status']; // Form fields names
+    $postVars = array('name','link','format','follow', 'status', 'background', 'zoneOne', 'zoneOneAlt', 'zoneTwo', 'zoneTwoAlt', 'zoneThree'); // Form fields names
     //Validate the POST variables and add up to error message if empty
     foreach ($postVars as $postVar){
         switch ($postVar){
@@ -25,19 +22,46 @@ if(filter_input(INPUT_POST, "submit")!==NULL && filter_input(INPUT_POST, "action
                             break;
             case 'status':  $advertObj->status = filter_input(INPUT_POST, $postVar);
                             break;
-            case 'content':  $advertObj->content = filter_input(INPUT_POST, $postVar);
-                            break;
-            case 'link':  $advertObj->link = filter_input(INPUT_POST, $postVar);
-                            break;
+            case 'background':   $advertObj->$postVar = basename($_FILES["background"]["name"]) ? rand(100000, 1000000)."_background".".".pathinfo(basename($_FILES["background"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {array_push ($errorArr, "Please enter $postVar ");}
+                                break;
+            case 'zoneOne':   $advertObj->$postVar = basename($_FILES["zoneOne"]["name"]) ? rand(100000, 1000000)."_zoneone".".".pathinfo(basename($_FILES["zoneOne"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {array_push ($errorArr, "Please enter $postVar ");}
+                                break;
+            case 'zoneOneAlt':   $advertObj->$postVar = basename($_FILES["zoneOneAlt"]["name"]) ? rand(100000, 1000000)."_zoneonealt".".".pathinfo(basename($_FILES["zoneOneAlt"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {array_push ($errorArr, "Please enter $postVar ");}
+                                break;
+            case 'zoneTwo':   $advertObj->$postVar = basename($_FILES["zoneTwo"]["name"]) ? rand(100000, 1000000)."_zonetwo".".".pathinfo(basename($_FILES["zoneTwo"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {array_push ($errorArr, "Please enter $postVar ");}
+                                break;
+            case 'zoneTwoAlt':   $advertObj->$postVar = basename($_FILES["zoneTwoAlt"]["name"]) ? rand(100000, 1000000)."_zonetwoalt".".".pathinfo(basename($_FILES["zoneTwoAlt"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {array_push ($errorArr, "Please enter $postVar ");}
+                                break;
+            case 'zoneThree':   $advertObj->$postVar = basename($_FILES["zoneThree"]["name"]) ? rand(100000, 1000000)."_zonethree".".".pathinfo(basename($_FILES["zoneThree"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {array_push ($errorArr, "Please enter $postVar ");}
+                                break;
             default :       $advertObj->$postVar = filter_input(INPUT_POST, $postVar) ? mysqli_real_escape_string($dbObj->connection, filter_input(INPUT_POST, $postVar)) :  ''; 
                             if($advertObj->$postVar === "") {array_push ($errorArr, "Please enter $postVar ");}
                             break;
         }
     }
     //If validated and not empty submit it to database
-    if(count($errorArr) < 1)   {if($advertObj->add($dbObj)==='success') {$msg = $thisPage->messageBox('Advert successfully added.', 'success');} else {$msg = $thisPage->messageBox('Advert addition failed.', 'error');}}
-    //Else show error messages
-    else{ $msg = $thisPage->showError($errorArr); }
+    if(count($errorArr) < 1)   {
+        $uploadOk = 1; $msg = '';
+        
+        if($uploadOk == 1 && move_uploaded_file($_FILES["background"]["tmp_name"], MEDIA_FILES_PATH. $advertObj->background) && 
+           move_uploaded_file($_FILES["zoneOne"]["tmp_name"], MEDIA_FILES_PATH. $advertObj->zoneOne) &&
+           move_uploaded_file($_FILES["zoneOneAlt"]["tmp_name"], MEDIA_FILES_PATH. $advertObj->zoneOneAlt) && 
+           move_uploaded_file($_FILES["zoneTwo"]["tmp_name"], MEDIA_FILES_PATH. $advertObj->zoneTwo) &&
+           move_uploaded_file($_FILES["zoneTwoAlt"]["tmp_name"], MEDIA_FILES_PATH. $advertObj->zoneTwoAlt) && 
+           move_uploaded_file($_FILES["zoneThree"]["tmp_name"], MEDIA_FILES_PATH. $advertObj->zoneThree)){
+            if($advertObj->add($dbObj)==='success') {
+                $msg = $thisPage->messageBox('Advert successfully added.', 'success');
+
+            } else {$msg = $thisPage->messageBox('Advert addition failed.', 'error');}
+        }        
+    }
+    else{ $msg = $thisPage->showError($errorArr); }//Else show error messages
 }
 
 //Advert Deletion Handler
@@ -53,7 +77,7 @@ if(filter_input(INPUT_POST, "delete-advert")!==NULL){
 }
 //Edit Post button click
 if(filter_input(INPUT_POST, "submit")!==NULL && filter_input(INPUT_POST, "actionField")=='edit'){
-    $postVars = ['id','name','link','content','size', 'type', 'position', 'location', 'follow', 'status']; // Form fields names
+    $postVars = ['id','name','link','content','size', 'format', 'position', 'location', 'follow', 'status']; // Form fields names
     //Validate the POST variables and add up to error message if empty
     foreach ($postVars as $postVar){
         switch ($postVar){
@@ -96,41 +120,26 @@ if(filter_input(INPUT_POST, "activate-advert")!==NULL){
 <head>
     <meta charset="utf-8">
     <title>Advert Manager</title>
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">    
-    
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
-    
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
-    
     <link href="css/style.css" rel="stylesheet">
-    
-    
     <link href="css/pages/plans.css" rel="stylesheet"> 
-    
     <script type="text/javascript" src="ckeditor/ckeditor.js"></script>
-
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
   </head>
 
 <body>
-
 <?php include 'includes/header.php';?>
-    
-    
 <div class="main">
-	
     <div class="main-inner">
-
         <div class="container">
-	
 	    <div class="row">
                   <div class="span12">
                     <div class="widget">			
@@ -144,7 +153,7 @@ if(filter_input(INPUT_POST, "activate-advert")!==NULL){
                             <?php echo '<br/> '.$msg; ?>
                             <br/>
                             <div id="hidden-add-advert" class="hidden">
-                                <form id="form-advert-manager" class="form-horizontal" method="POST">
+                                <form id="form-advert-manager" class="form-horizontal" method="POST" enctype="multipart/form-data">
                                     <fieldset>
                                             <div class="control-group">											
                                                 <label class="control-label" for="name">Advert Name: </label>
@@ -161,52 +170,9 @@ if(filter_input(INPUT_POST, "activate-advert")!==NULL){
                                                 </div> <!-- /controls -->				
                                             </div> <!-- /control-group -->
                                             <div class="control-group">											
-                                                    <label class="control-label" for="content">Advert Content: </label>
+                                                    <label class="control-label" for="format">Advert Format: </label>
                                                     <div class="controls">
-                                                        <textarea class="span6" name="content" id="content" value="" placeholder="Advert source code"></textarea>
-                                                    </div> <!-- /controls -->				
-                                            </div> <!-- /control-group -->
-                                            <div class="control-group">											
-                                                    <label class="control-label" for="size">Advert Size: </label>
-                                                    <div class="controls">
-                                                        <select name="size" id="size">
-                                                            <option value="Sky Scapper (160 x 600)">Sky Scapper(160 x 600)</option>
-                                                            <option value="Landscape (728 x 90)">Landscape (728 x 90)</option>
-                                                            <option value="Portrait 1 (250 x 300)">Portrait 1 (250 x 300)</option>
-                                                            <option value="Portrait 2 (300 X 300)">Portrait 2 (300 X 300)</option>
-                                                            <option value="Small Landscape (468 X 60)">Small Landscape (468 X 60)</option>
-                                                            <option value="Small Ad (234 x 90)">Small Ad (234 x 90)</option>
-                                                        </select>
-                                                    </div> <!-- /controls -->				
-                                            </div> <!-- /control-group -->
-                                            <div class="control-group">											
-                                                    <label class="control-label" for="type">Advert Type: </label>
-                                                    <div class="controls">
-                                                        <select name="type" id="type">
-                                                            <option value="PPC (Pay Per Click)">PPC (Pay Per Click)</option>
-                                                            <option value="DIA (Direct Image Ads)">DIA (Direct Image Ads)</option>
-                                                        </select>
-                                                    </div> <!-- /controls -->				
-                                            </div> <!-- /control-group -->
-                                            <div class="control-group">											
-                                                    <label class="control-label" for="location">Location: </label>
-                                                    <div class="controls">
-                                                        <select name="location" id="location">
-                                                            <option value="Main Page">Main Page</option>
-                                                        </select>
-                                                    </div> <!-- /controls -->				
-                                            </div> <!-- /control-group -->
-                                            <div class="control-group">											
-                                                    <label class="control-label" for="position">Position: </label>
-                                                    <div class="controls">
-                                                        <select name="position" id="position">
-                                                        <?php 
-                                                            $positionArray = ['Top Banner', 'Page Banner Top', 'Page Banner Bottom', 'Side Banner 1', 'Side Banner 2'];
-                                                            foreach ($positionArray as $positionArr) {
-                                                                echo '<option value="'.$positionArr.'">'.$positionArr.'</option>';
-                                                            }
-                                                        ?>
-                                                        </select>
+                                                        <input type="text" class="span6" name="format" id="format" value="" placeholder="Advert Format">
                                                     </div> <!-- /controls -->				
                                             </div> <!-- /control-group -->
                                             <div class="control-group">											
@@ -233,7 +199,42 @@ if(filter_input(INPUT_POST, "activate-advert")!==NULL){
                                                     </label>
                                                 </div>	<!-- /controls -->			
                                             </div> <!-- /control-group -->
-                                            
+                                            <div class="control-group">											
+                                                    <label class="control-label" for="background">Advert Background: </label>
+                                                    <div class="controls">
+                                                        <input type="file" class="span6" name="background" id="background" value="">
+                                                    </div> <!-- /controls -->				
+                                            </div> <!-- /control-group -->
+                                            <div class="control-group">											
+                                                    <label class="control-label" for="zoneOne">First Section Image: </label>
+                                                    <div class="controls">
+                                                        <input type="file" class="span6" name="zoneOne" id="zoneOne" value="">
+                                                    </div> <!-- /controls -->				
+                                            </div> <!-- /control-group -->
+                                            <div class="control-group">											
+                                                    <label class="control-label" for="zoneOneAlt">First Section Alternate Image: </label>
+                                                    <div class="controls">
+                                                        <input type="file" class="span6" name="zoneOneAlt" id="zoneOneAlt" value="">
+                                                    </div> <!-- /controls -->				
+                                            </div> <!-- /control-group -->
+                                            <div class="control-group">											
+                                                    <label class="control-label" for="zoneTwo">Middle Section Image: </label>
+                                                    <div class="controls">
+                                                        <input type="file" class="span6" name="zoneTwo" id="zoneTwo" value="">
+                                                    </div> <!-- /controls -->				
+                                            </div> <!-- /control-group -->
+                                            <div class="control-group">											
+                                                    <label class="control-label" for="zoneTwoAlt">Middle Section Alternate Image: </label>
+                                                    <div class="controls">
+                                                        <input type="file" class="span6" name="zoneTwoAlt" id="zoneTwoAlt" value="">
+                                                    </div> <!-- /controls -->				
+                                            </div> <!-- /control-group -->
+                                            <div class="control-group">											
+                                                    <label class="control-label" for="zoneThree">Last Section Image: </label>
+                                                    <div class="controls">
+                                                        <input type="file" class="span6" name="zoneThree" id="zoneThree" value="">
+                                                    </div> <!-- /controls -->				
+                                            </div> <!-- /control-group -->
                                             <div class="form-actions">
                                                 <button type="submit" class="btn btn-primary" name="submit">Save</button> 
                                                 <button class="btn" type="reset">Reset</button>
@@ -246,12 +247,18 @@ if(filter_input(INPUT_POST, "activate-advert")!==NULL){
                                 <table class="table table-striped table-bordered">
                                     <thead>
                                     <tr>
+                                      <th> ID </th>
                                       <th> Advert Name </th>
-                                      <th> Type</th>
                                       <th> Format</th>
-                                      <th> Page Location</th>
-                                      <th> Position</th>
+                                      <th> Link</th>
                                       <th> Follow</th>
+                                      <th> Background</th>
+                                      <th> 1st Section</th>
+                                      <th> 1st Section 2</th>
+                                      <th> 2nd Section</th>
+                                      <th> 2nd Section 2</th>
+                                      <th> 3rd Section</th>
+                                      <th> 3rd Section 2</th>
                                       <th> View</th>
                                       <th class="td-actions"> Actions</th>
                                     </tr>
@@ -264,18 +271,23 @@ if(filter_input(INPUT_POST, "activate-advert")!==NULL){
                                       $fetAdvertStatus = 'icon-check-empty'; $fetAdvertStatCol = 'btn-warning'; $fetAdvertStatTxt = "Activate";
                                       if($fetchedAdvert['status']==1){$fetAdvertStatus = 'icon-check'; $fetAdvertStatCol = 'btn-success'; $fetAdvertStatTxt = "De-activate";}
                                       if($fetchedAdvert['follow'] == 1) { $followCond = 'Follow'; } else { $followCond = 'No Follow'; }
-                                      if($fetchedAdvert['type']=='PPC (Pay Per Click)'){ $viewAdvText = 'View Code'; } else{ $viewAdvText = 'View Image'; }
                                       echo '<tr>
+                                        <td>'.$fetchedAdvert['id'].'</td>
                                         <td>'.$fetchedAdvert['name'].'</td>
-                                        <td>'.$fetchedAdvert['type'].'</td>
-                                        <td>'.$fetchedAdvert['size'].'</td>
-                                        <td>'.$fetchedAdvert['location'].'</td>
-                                        <td>'.$fetchedAdvert['position'].'</td>
+                                        <td>'.$fetchedAdvert['format'].'</td>
+                                        <td>'.$fetchedAdvert['link'].'</td>
                                         <td>'.$followCond.'</td>
-                                        <td><a href="'.$fetchedAdvert['link'].'">'.$viewAdvText.'</a></td>
+                                        <td><img src="'.MEDIA_FILES_PATH1.$fetchedAdvert['background'].'" style="width:16px;height:60px"></td>
+                                        <td>'.$followCond.'</td>
+                                        <td><img src="'.MEDIA_FILES_PATH1.$fetchedAdvert['zone_one'].'" style="width:52px;height:38px"></td>
+                                        <td><img src="'.MEDIA_FILES_PATH1.$fetchedAdvert['zone_one_alt'].'" style="width:52px;height:38px"></td>
+                                        <td><img src="'.MEDIA_FILES_PATH1.$fetchedAdvert['zone_two'].'" style="width:52px;height:38px"></td>
+                                        <td><img src="'.MEDIA_FILES_PATH1.$fetchedAdvert['zone_two_alt'].'" style="width:52px;height:38px"></td>
+                                        <td><img src="'.MEDIA_FILES_PATH1.$fetchedAdvert['zone_three'].'" style="width:52px;height:24px"></td>
+                                        <td><a href="'.SITE_URL.'?id='.$fetchedAdvert['id'].'">Preview Advert</a></td>
                                         <form action="" method="post">
                                         <input type="hidden" name="hidden-advert-id" value="'.$fetchedAdvert['id'].'"><input type="hidden" name="hidden-advert-status" value="'.$fetchedAdvert['status'].'">
-                                        <td class="td-actions"><button type="submit" name="delete-advert" class="btn btn-danger btn-small" title="Delete"><i class="btn-icon-only icon-trash"> </i> </button> <button type="button" data-id="'.$fetchedAdvert['id'].'" data-link="'.$fetchedAdvert['link'].'" data-follow="'.$fetchedAdvert['follow'].'" data-status="'.$fetchedAdvert['status'].'" data-position="'.$fetchedAdvert['position'].'" data-name="'.$fetchedAdvert['name'].'" data-location="'.$fetchedAdvert['location'].'" data-type="'.$fetchedAdvert['type'].'" data-size="'.$fetchedAdvert['size'].'" name="edit-advert" class="btn btn-info btn-small edit-advert-btn"  title="Edit"><i class="btn-icon-only icon-pencil"> </i> <span class="hidden" id="hiddenAdvLink">'.$fetchedAdvert['link'].'</span> </button> <button type="submit" name="activate-advert" class="btn '.$fetAdvertStatCol.' btn-small"  title="'.$fetAdvertStatTxt.'"><i class="btn-icon-only '.$fetAdvertStatus.' "> </i></button></td>
+                                        <td class="td-actions"><div style="white-space:nowrap;"><button type="submit" name="delete-advert" class="btn btn-danger btn-small" title="Delete"><i class="btn-icon-only icon-trash"> </i> </button> <button type="button" data-id="'.$fetchedAdvert['id'].'" data-link="'.$fetchedAdvert['link'].'" data-follow="'.$fetchedAdvert['follow'].'" data-status="'.$fetchedAdvert['status'].'" data-format="'.$fetchedAdvert['format'].'" data-background="'.$fetchedAdvert['background'].'" data-zone-one="'.$fetchedAdvert['zone_one'].'" data-zone-one-alt="'.$fetchedAdvert['zone_one_alt'].'" data-zone-two="'.$fetchedAdvert['zone_two'].'" data-zone-two-alt="'.$fetchedAdvert['zone_two_alt'].'"  data-zone-three="'.$fetchedAdvert['zone_three'].'" name="edit-advert" class="btn btn-info btn-small edit-advert-btn"  title="Edit"><i class="btn-icon-only icon-pencil"> </i> <span class="hidden" id="hiddenAdvLink">'.$fetchedAdvert['link'].'</span> </button> <button type="submit" name="activate-advert" class="btn '.$fetAdvertStatCol.' btn-small"  title="'.$fetAdvertStatTxt.'"><i class="btn-icon-only '.$fetAdvertStatus.' "> </i></button></div></td>
                                         </form>
                                       </tr>';
                                   }

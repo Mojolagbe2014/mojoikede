@@ -1,11 +1,4 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Description of Advert
  *
@@ -14,14 +7,17 @@
 class Advert implements ContentManipulator{
     private $id;
     private $name;
-    private $size;
-    private $type;
-    private $content;
-    private $location = '';
-    private $position;
     private $link;
+    private $format;
     private $follow = 0;
     private $status = 0;
+    private $background;
+    private $zoneOne;
+    private $zoneOneAlt;
+    private $zoneTwo;
+    private $zoneTwoAlt;
+    private $zoneThree;
+    private static $tableName = "advert";
     
     //Class Constructor
     public function __construct() {
@@ -44,10 +40,10 @@ class Advert implements ContentManipulator{
      * @return String Operation status: 'success|error'
      */
     function add($dbObj){
-        $sql = "INSERT INTO adverts(name, size, type, content, location, position, link, follow, status) "
-                ."VALUES ('{$this->name}','{$this->size}','{$this->type}','{$this->content}','{$this->location}'"
-                . ",'{$this->position}','{$this->link}','{$this->follow}','{$this->status}')";
-        if($this->notEmpty($this->name,$this->size)){
+        $sql = "INSERT INTO ".self::$tableName." (name, link, format, follow, status, background, zone_one, zone_one_alt, zone_two, zone_two_alt, zone_three) "
+                ."VALUES ('{$this->name}','{$this->link}','{$this->format}','{$this->follow}','{$this->status}'"
+                . ",'{$this->background}','{$this->zoneOne}','{$this->zoneOneAlt}','{$this->zoneTwo}','{$this->zoneTwoAlt}','{$this->zoneThree}')";
+        if($this->notEmpty($this->name,$this->background)){
             $result = $dbObj->query($sql);
             if($result !== false){ return 'success'; }
             else{ return 'error';    }
@@ -60,7 +56,7 @@ class Advert implements ContentManipulator{
      * @return String Operation status: 'success|error'
      */
     public function delete($dbObj){
-        $sql = "DELETE FROM adverts WHERE id = $this->id ";
+        $sql = "DELETE FROM ".self::$tableName." WHERE id = $this->id ";
         if($this->notEmpty($this->id)){
             $result = $dbObj->query($sql);
             if($result !== false){ return 'success'; }
@@ -69,15 +65,15 @@ class Advert implements ContentManipulator{
         else{return 'error'; }
     }
 
-    /** Method that fetches adverts from database
+    /** Method that fetches advert from database
      * @param object $dbObj Database connectivity and manipulation object
      * @param string $column Column name of the data to be fetched
      * @param string $condition Additional condition e.g category_id > 9
      * @param string $sort column name to be used as sort parameter
      */
     public function fetch($dbObj, $column="*", $condition="", $sort="id"){
-        $sql = "SELECT $column FROM adverts ORDER BY $sort";
-        if(!empty($condition)){$sql = "SELECT $column FROM adverts WHERE $condition ORDER BY $sort";}
+        $sql = "SELECT $column FROM ".self::$tableName." ORDER BY $sort";
+        if(!empty($condition)){$sql = "SELECT $column FROM ".self::$tableName." WHERE $condition ORDER BY $sort";}
         $result = $dbObj->fetchAssoc($sql);
         return $result;
     }
@@ -98,7 +94,7 @@ class Advert implements ContentManipulator{
      * @return String Operation status: 'success|error'
      */
     public function update($dbObj){
-        $sql = "UPDATE adverts SET name = '{$this->name}', size = '{$this->size}', type = '{$this->type}', content = '{$this->content}', location = '{$this->position}', position = '{$this->location}', link = '{$this->link}', follow = '{$this->follow}', status = '{$this->status}' WHERE id = $this->id ";
+        $sql = "UPDATE ".self::$tableName." SET name = '{$this->name}', link = '{$this->link}', format = '{$this->format}', content = '{$this->content}', location = '{$this->position}', position = '{$this->location}', link = '{$this->link}', follow = '{$this->follow}', status = '{$this->status}' WHERE id = $this->id ";
         if($this->notEmpty($this->id)){
             $result = $dbObj->query($sql);
             if($result !== false){ return 'success'; }
@@ -114,12 +110,26 @@ class Advert implements ContentManipulator{
      * @param int $id Id of the advert to be updated
      */
     public static function updateSingle($dbObj, $field, $value, $id){
-        $sql = "UPDATE adverts SET $field = '{$value}' WHERE id = $id ";
+        $sql = "UPDATE ".self::$tableName." SET $field = '{$value}' WHERE id = $id ";
         if(!empty($id)){
             $result = $dbObj->query($sql);
             if($result !== false){ return 'success'; }
             else{ return 'error';    }
         }
         else{return 'error'; }
+    }
+    
+    /** getSingle() fetches a single column value
+     * @param object $dbObj Database connectivity and manipulation object
+     * @param string $column Table's required column in the datatbase
+     * @param int $id Advert id of the advert whose name is to be fetched
+     * @return string Name of the advert
+     */
+    public static function getSingle($dbObj, $column, $id) {
+        $field = intval($id) ? "id = '{$id}' " : " name LIKE '%{$id}%' ";
+        $thisAsstReqVal = '';
+        $thisAsstReqVals = $dbObj->fetchNum("SELECT $column FROM ".self::$tableName." WHERE $field ORDER BY id LIMIT 1");
+        foreach ($thisAsstReqVals as $thisAsstReqVals) { $thisAsstReqVal = $thisAsstReqVals[0]; }
+        return $thisAsstReqVal;
     }
 }
