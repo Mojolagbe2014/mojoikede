@@ -1,0 +1,32 @@
+/* Custom styles of banner1 */
+.ca_banner1{
+	width:650px;
+	height:300px;
+}
+.ca_bg1{
+	background:#fff url(../images/bg.html) no-repeat top left;
+}
+.ca_banner1 .ca_zone1{
+	top:0px;
+	left:0px;
+}
+.ca_banner1 .ca_wrap1{
+	width:320px;
+	height:300px;
+}
+.ca_banner1 .ca_zone2{
+	top:100px;
+	left:240px;
+}
+.ca_banner1 .ca_wrap2{
+	width:387px;
+	height:203px;
+}
+.ca_banner1 .ca_zone3{
+	top:32px;
+	left:250px;
+}
+.ca_banner1 .ca_wrap3{
+	width:378px;
+	height:31px;
+}

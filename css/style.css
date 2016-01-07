@@ -1,0 +1,16 @@
+.ca_banner{ position:relative; overflow:hidden; background:#f0f0f0; padding:0px; border:1px solid #fff; -moz-box-shadow:0px 0px 2px #aaa inset; }
+.ca_slide{ width:100%; height:100%; position:relative; overflow:hidden; }
+.ca_zone{ position:absolute; width:100%; left: 0px; top: 499px; }
+.ca_wrap{ position:relative; display:table-cell; vertical-align:middle; text-align:center; }
+.ca_wrap img.ca_shown{ display:inline !important; }
+
+/*Custom Style for Second Banner*/
+.ca_banner2{ width:160px; height:600px; }
+.ca_bg2{ background:#fff url(../images/bgSmall.jpg) no-repeat top left; width:160px; }
+.ca_banner2 .ca_zone1{ top:10px; left:0px; }
+.ca_banner2 .ca_wrap1, /*They are the same size*/
+.ca_banner2 .ca_wrap2{ height:195px; }
+.ca_banner2 .ca_zone2{ top:250px; left:0px; }
+.ca_banner2 .ca_zone3{ top:520px; }
+.ca_banner2 .ca_wrap3, .ca_banner2 .ca_wrap2, .ca_banner2 .ca_wrap1{ width:160px; }
+.ca_banner2 .ca_wrap3{height:60px;}
