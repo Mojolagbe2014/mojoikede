@@ -71,27 +71,55 @@ if(filter_input(INPUT_POST, "delete-advert")!==NULL){
     if(filter_input(INPUT_POST, 'hidden-advert-id') === "") {array_push ($errorArr, "Illegal Operation.");}
     
     //If validated and not empty submit it to database
-    if(count($errorArr) < 1)   {if($advertToDel->delete($dbObj)==='success') {$msg = $thisPage->messageBox('Advert successfully deleted.', 'success');} else {$msg = $thisPage->messageBox('Advert deletion failed.', 'error');}}
-    //Else show error messages
-    else{ $msg = $thisPage->showError($errorArr); }
+    if(count($errorArr) < 1)   {
+        $advertToDel->background = Advert::getSingle($dbObj, 'background', $advertToDel->id) ? MEDIA_FILES_PATH.Advert::getSingle($dbObj, 'background', $advertToDel->id) : '';
+        $advertToDel->zoneOne = Advert::getSingle($dbObj, 'zone_one', $advertToDel->id) ? MEDIA_FILES_PATH.Advert::getSingle($dbObj, 'zone_one', $advertToDel->id) : '';
+        $advertToDel->zoneOneAlt = Advert::getSingle($dbObj, 'zone_one_alt', $advertToDel->id) ? MEDIA_FILES_PATH.Advert::getSingle($dbObj, 'zone_one_alt', $advertToDel->id) : '';
+        $advertToDel->zoneTwo = Advert::getSingle($dbObj, 'zone_two', $advertToDel->id) ? MEDIA_FILES_PATH.Advert::getSingle($dbObj, 'zone_two', $advertToDel->id) : '';
+        $advertToDel->zoneTwoAlt = Advert::getSingle($dbObj, 'zone_two_alt', $advertToDel->id) ? MEDIA_FILES_PATH.Advert::getSingle($dbObj, 'zone_two_alt', $advertToDel->id) : '';
+        $advertToDel->zoneThree = Advert::getSingle($dbObj, 'zone_three', $advertToDel->id) ? MEDIA_FILES_PATH.Advert::getSingle($dbObj, 'zone_three', $advertToDel->id) : '';
+        
+        if($advertToDel->delete($dbObj)==='success' && StringManipulator::arrayNotEmpty($advertToDel->background,$advertToDel->zoneOne,$advertToDel->zoneOneAlt,$advertToDel->zoneTwo,$advertToDel->zoneTwoAlt,$advertToDel->zoneThree)) {
+            $postVars = array('background', 'zoneOne', 'zoneOneAlt', 'zoneTwo', 'zoneTwoAlt', 'zoneThree');
+            foreach ($postVars as $postVar){
+                switch ($postVar){default: if(file_exists($advertToDel->$postVar)){unlink($advertToDel->$postVar);} break;}
+            }
+            $msg = $thisPage->messageBox('Advert successfully deleted.', 'success');
+        } else {$msg = $thisPage->messageBox('Advert deletion failed.', 'error');}
+    }
+    else{ $msg = $thisPage->showError($errorArr); }//Else show error messages
 }
 //Edit Post button click
 if(filter_input(INPUT_POST, "submit")!==NULL && filter_input(INPUT_POST, "actionField")=='edit'){
-    $postVars = ['id','name','link','content','size', 'format', 'position', 'location', 'follow', 'status']; // Form fields names
+    $postVars = array('id','name','link','format','follow', 'status', 'background', 'zoneOne', 'zoneOneAlt', 'zoneTwo', 'zoneTwoAlt', 'zoneThree'); // Form fields names
+    $backgroundOld = filter_input(INPUT_POST, 'backgroundOld'); $zoneOneOld = filter_input(INPUT_POST, 'zoneOneOld');
+    $zoneOneAltOld = filter_input(INPUT_POST, 'zoneOneAltOld'); $zoneTwoOld = filter_input(INPUT_POST, 'zoneTwoOld');
+    $zoneTwoAltOld = filter_input(INPUT_POST, 'zoneTwoAltOld'); $zoneThreeOld = filter_input(INPUT_POST, 'zoneThreeOld');
     //Validate the POST variables and add up to error message if empty
     foreach ($postVars as $postVar){
         switch ($postVar){
-            case 'id':  $advertObj->$postVar = filter_input(INPUT_POST, $postVar, FILTER_VALIDATE_INT) ? mysqli_real_escape_string($dbObj->connection, filter_input(INPUT_POST, $postVar, FILTER_VALIDATE_INT)) :  ''; 
-                            if($advertObj->$postVar === "") {array_push ($errorArr, "Please enter $postVar ");}
-                            break;
             case 'follow':  $advertObj->follow = filter_input(INPUT_POST, $postVar);
                             break;
             case 'status':  $advertObj->status = filter_input(INPUT_POST, $postVar);
                             break;
-            case 'content':  $advertObj->content = filter_input(INPUT_POST, $postVar);
-                            break;
-            case 'link':  $advertObj->link = filter_input(INPUT_POST, $postVar);
-                            break;
+            case 'background':   $advertObj->$postVar = basename($_FILES["background"]["name"]) ? rand(100000, 1000000)."_background".".".pathinfo(basename($_FILES["background"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {$advertObj->$postVar = $backgroundOld;}
+                                break;
+            case 'zoneOne':   $advertObj->$postVar = basename($_FILES["zoneOne"]["name"]) ? rand(100000, 1000000)."_zoneone".".".pathinfo(basename($_FILES["zoneOne"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneOneOld;}
+                                break;
+            case 'zoneOneAlt':   $advertObj->$postVar = basename($_FILES["zoneOneAlt"]["name"]) ? rand(100000, 1000000)."_zoneonealt".".".pathinfo(basename($_FILES["zoneOneAlt"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneOneAltOld;}
+                                break;
+            case 'zoneTwo':   $advertObj->$postVar = basename($_FILES["zoneTwo"]["name"]) ? rand(100000, 1000000)."_zonetwo".".".pathinfo(basename($_FILES["zoneTwo"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneTwoOld;}
+                                break;
+            case 'zoneTwoAlt':   $advertObj->$postVar = basename($_FILES["zoneTwoAlt"]["name"]) ? rand(100000, 1000000)."_zonetwoalt".".".pathinfo(basename($_FILES["zoneTwoAlt"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneTwoAltOld;}
+                                break;
+            case 'zoneThree':   $advertObj->$postVar = basename($_FILES["zoneThree"]["name"]) ? rand(100000, 1000000)."_zonethree".".".pathinfo(basename($_FILES["zoneThree"]["name"]),PATHINFO_EXTENSION): ""; 
+                                if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneThreeOld;}
+                                break;
             default :       $advertObj->$postVar = filter_input(INPUT_POST, $postVar) ? mysqli_real_escape_string($dbObj->connection, filter_input(INPUT_POST, $postVar)) :  ''; 
                             if($advertObj->$postVar === "") {array_push ($errorArr, "Please enter $postVar ");}
                             break;
@@ -99,8 +127,7 @@ if(filter_input(INPUT_POST, "submit")!==NULL && filter_input(INPUT_POST, "action
     }
     //If validated and not empty submit it to database
     if(count($errorArr) < 1)   {if($advertObj->update($dbObj)==='success') {$msg = $thisPage->messageBox('Advert successfully Updated.', 'success');} else {$msg = $thisPage->messageBox('Advert update failed.', 'error');}}
-    //Else show error messages
-    else{ $msg = $thisPage->showError($errorArr); }
+    else{ $msg = $thisPage->showError($errorArr); }//Else show error messages
 }
 //Advert Activation button click handler
 if(filter_input(INPUT_POST, "activate-advert")!==NULL){
@@ -202,36 +229,42 @@ if(filter_input(INPUT_POST, "activate-advert")!==NULL){
                                             <div class="control-group">											
                                                     <label class="control-label" for="background">Advert Background: </label>
                                                     <div class="controls">
+                                                        <input type="hidden" name="backgroundOld" id="backgroundOld"/>
                                                         <input type="file" class="span6" name="background" id="background" value="">
                                                     </div> <!-- /controls -->				
                                             </div> <!-- /control-group -->
                                             <div class="control-group">											
                                                     <label class="control-label" for="zoneOne">First Section Image: </label>
                                                     <div class="controls">
+                                                        <input type="hidden" name="zoneOneOld" id="zoneOneOld"/>
                                                         <input type="file" class="span6" name="zoneOne" id="zoneOne" value="">
                                                     </div> <!-- /controls -->				
                                             </div> <!-- /control-group -->
                                             <div class="control-group">											
                                                     <label class="control-label" for="zoneOneAlt">First Section Alternate Image: </label>
                                                     <div class="controls">
+                                                        <input type="hidden" name="zoneOneAltOld" id="zoneOneAltOld"/>
                                                         <input type="file" class="span6" name="zoneOneAlt" id="zoneOneAlt" value="">
                                                     </div> <!-- /controls -->				
                                             </div> <!-- /control-group -->
                                             <div class="control-group">											
                                                     <label class="control-label" for="zoneTwo">Middle Section Image: </label>
                                                     <div class="controls">
+                                                        <input type="hidden" name="zoneTwoOld" id="zoneTwoOld"/>
                                                         <input type="file" class="span6" name="zoneTwo" id="zoneTwo" value="">
                                                     </div> <!-- /controls -->				
                                             </div> <!-- /control-group -->
                                             <div class="control-group">											
                                                     <label class="control-label" for="zoneTwoAlt">Middle Section Alternate Image: </label>
                                                     <div class="controls">
+                                                        <input type="hidden" name="zoneTwoAltOld" id="zoneTwoAltOld"/>
                                                         <input type="file" class="span6" name="zoneTwoAlt" id="zoneTwoAlt" value="">
                                                     </div> <!-- /controls -->				
                                             </div> <!-- /control-group -->
                                             <div class="control-group">											
                                                     <label class="control-label" for="zoneThree">Last Section Image: </label>
                                                     <div class="controls">
+                                                        <input type="hidden" name="zoneThreeOld" id="zoneThreeOld"/>
                                                         <input type="file" class="span6" name="zoneThree" id="zoneThree" value="">
                                                     </div> <!-- /controls -->				
                                             </div> <!-- /control-group -->
@@ -287,7 +320,8 @@ if(filter_input(INPUT_POST, "activate-advert")!==NULL){
                                         <td><a href="'.SITE_URL.'?id='.$fetchedAdvert['id'].'">Preview Advert</a></td>
                                         <form action="" method="post">
                                         <input type="hidden" name="hidden-advert-id" value="'.$fetchedAdvert['id'].'"><input type="hidden" name="hidden-advert-status" value="'.$fetchedAdvert['status'].'">
-                                        <td class="td-actions"><div style="white-space:nowrap;"><button type="submit" name="delete-advert" class="btn btn-danger btn-small" title="Delete"><i class="btn-icon-only icon-trash"> </i> </button> <button type="button" data-id="'.$fetchedAdvert['id'].'" data-link="'.$fetchedAdvert['link'].'" data-follow="'.$fetchedAdvert['follow'].'" data-status="'.$fetchedAdvert['status'].'" data-format="'.$fetchedAdvert['format'].'" data-background="'.$fetchedAdvert['background'].'" data-zone-one="'.$fetchedAdvert['zone_one'].'" data-zone-one-alt="'.$fetchedAdvert['zone_one_alt'].'" data-zone-two="'.$fetchedAdvert['zone_two'].'" data-zone-two-alt="'.$fetchedAdvert['zone_two_alt'].'"  data-zone-three="'.$fetchedAdvert['zone_three'].'" name="edit-advert" class="btn btn-info btn-small edit-advert-btn"  title="Edit"><i class="btn-icon-only icon-pencil"> </i> <span class="hidden" id="hiddenAdvLink">'.$fetchedAdvert['link'].'</span> </button> <button type="submit" name="activate-advert" class="btn '.$fetAdvertStatCol.' btn-small"  title="'.$fetAdvertStatTxt.'"><i class="btn-icon-only '.$fetAdvertStatus.' "> </i></button></div></td>
+                                        <td class="td-actions"><div style="white-space:nowrap;"><button type="submit" name="delete-advert" class="btn btn-danger btn-small" title="Delete"><i class="btn-icon-only icon-trash"> </i> </button> 
+                                        <button type="button" data-id="'.$fetchedAdvert['id'].'" data-name="'.$fetchedAdvert['name'].'" data-link="'.$fetchedAdvert['link'].'" data-follow="'.$fetchedAdvert['follow'].'" data-status="'.$fetchedAdvert['status'].'" data-format="'.$fetchedAdvert['format'].'" data-background="'.$fetchedAdvert['background'].'" data-zone-one="'.$fetchedAdvert['zone_one'].'" data-zone-one-alt="'.$fetchedAdvert['zone_one_alt'].'" data-zone-two="'.$fetchedAdvert['zone_two'].'" data-zone-two-alt="'.$fetchedAdvert['zone_two_alt'].'"  data-zone-three="'.$fetchedAdvert['zone_three'].'" name="edit-advert" class="btn btn-info btn-small edit-advert-btn"  title="Edit"><i class="btn-icon-only icon-pencil"> </i> <span class="hidden" id="hiddenAdvLink">'.$fetchedAdvert['link'].'</span> </button> <button type="submit" name="activate-advert" class="btn '.$fetAdvertStatCol.' btn-small"  title="'.$fetAdvertStatTxt.'"><i class="btn-icon-only '.$fetAdvertStatus.' "> </i></button></div></td>
                                         </form>
                                       </tr>';
                                   }
@@ -330,13 +364,14 @@ if(filter_input(INPUT_POST, "activate-advert")!==NULL){
             }
         });
         $('.edit-advert-btn').click(function(){
-            var formVar = {id:$(this).attr('data-id'),name:$(this).attr('data-name'), link:$(this).attr('data-link'), content:$(this).find('span').html(), size:$(this).attr('data-size'), type:$(this).attr('data-type'), position:$(this).attr('data-position'), location:$(this).attr('data-location'), follow:$(this).attr('data-follow'), status:$(this).attr('data-status')};
+            var formVar = {id:$(this).attr('data-id'),name:$(this).attr('data-name'), link:$(this).attr('data-link'), format:$(this).attr('data-format'), background:$(this).attr('data-background'), zoneOne:$(this).attr('data-zone-one'), zoneOneAlt:$(this).attr('data-zone-one-alt'), zoneTwo:$(this).attr('data-zone-two'), zoneTwoAlt:$(this).attr('data-zone-two-alt'), zoneThree:$(this).attr('data-zone-three'), follow:$(this).attr('data-follow'), status:$(this).attr('data-status')};
             $('#btn-add-advert').find('i').toggleClass('icon-plus').toggleClass('icon-minus');
             $('#hidden-add-advert').slideDown().removeClass('hidden');
             $('form#form-advert-manager #actionField').val('edit');
             $.each(formVar, function(key, value) { 
                 if(key == 'status'){ $('form#form-advert-manager input[value='+value+'].status-btn').attr('checked', 'checked');}
                 else if(key == 'follow'){ $('form#form-advert-manager input[value='+value+'].follow-btn').attr('checked', 'checked');}
+                else if(key === 'background' || key === 'zoneOne' || key === 'zoneOneAlt' || key === 'zoneTwo' || key === 'zoneTwoAlt' || key === 'zoneThree'){ $('form#form-advert-manager #'+key+'Old').val(value); }
                 else $('form#form-advert-manager #'+key).val(value); 
             });
         });
