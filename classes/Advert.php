@@ -94,7 +94,7 @@ class Advert implements ContentManipulator{
      * @return String Operation status: 'success|error'
      */
     public function update($dbObj){
-        $sql = "UPDATE ".self::$tableName." SET name = '{$this->name}', link = '{$this->link}', format = '{$this->format}', content = '{$this->content}', location = '{$this->position}', position = '{$this->location}', link = '{$this->link}', follow = '{$this->follow}', status = '{$this->status}' WHERE id = $this->id ";
+        $sql = "UPDATE ".self::$tableName." SET name = '{$this->name}', link = '{$this->link}', format = '{$this->format}', background = '{$this->background}', zone_one = '{$this->zoneOne}', zone_one_alt = '{$this->zoneOneAlt}', zone_two = '{$this->zoneTwo}', zone_two_alt = '{$this->zoneTwoAlt}', zone_three = '{$this->zoneThree}', follow = '{$this->follow}', status = '{$this->status}' WHERE id = $this->id ";
         if($this->notEmpty($this->id)){
             $result = $dbObj->query($sql);
             if($result !== false){ return 'success'; }
