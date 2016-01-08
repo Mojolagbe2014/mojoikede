@@ -92,9 +92,10 @@ if(filter_input(INPUT_POST, "delete-advert")!==NULL){
 //Edit Post button click
 if(filter_input(INPUT_POST, "submit")!==NULL && filter_input(INPUT_POST, "actionField")=='edit'){
     $postVars = array('id','name','link','format','follow', 'status', 'background', 'zoneOne', 'zoneOneAlt', 'zoneTwo', 'zoneTwoAlt', 'zoneThree'); // Form fields names
-    $backgroundOld = filter_input(INPUT_POST, 'backgroundOld'); $zoneOneOld = filter_input(INPUT_POST, 'zoneOneOld');
-    $zoneOneAltOld = filter_input(INPUT_POST, 'zoneOneAltOld'); $zoneTwoOld = filter_input(INPUT_POST, 'zoneTwoOld');
-    $zoneTwoAltOld = filter_input(INPUT_POST, 'zoneTwoAltOld'); $zoneThreeOld = filter_input(INPUT_POST, 'zoneThreeOld');
+    $old = new stdClass();
+    $old->background = filter_input(INPUT_POST, 'backgroundOld'); $old->zoneOne = filter_input(INPUT_POST, 'zoneOneOld');
+    $old->zoneOneAlt = filter_input(INPUT_POST, 'zoneOneAltOld'); $old->zoneTwo = filter_input(INPUT_POST, 'zoneTwoOld');
+    $old->zoneTwoAlt = filter_input(INPUT_POST, 'zoneTwoAltOld'); $old->zoneThree = filter_input(INPUT_POST, 'zoneThreeOld');
     //Validate the POST variables and add up to error message if empty
     foreach ($postVars as $postVar){
         switch ($postVar){
@@ -103,22 +104,22 @@ if(filter_input(INPUT_POST, "submit")!==NULL && filter_input(INPUT_POST, "action
             case 'status':  $advertObj->status = filter_input(INPUT_POST, $postVar);
                             break;
             case 'background':   $advertObj->$postVar = basename($_FILES["background"]["name"]) ? rand(100000, 1000000)."_background".".".pathinfo(basename($_FILES["background"]["name"]),PATHINFO_EXTENSION): ""; 
-                                if($advertObj->$postVar == "") {$advertObj->$postVar = $backgroundOld;}
+                                //if($advertObj->$postVar == "") {$advertObj->$postVar = $backgroundOld;}
                                 break;
             case 'zoneOne':   $advertObj->$postVar = basename($_FILES["zoneOne"]["name"]) ? rand(100000, 1000000)."_zoneone".".".pathinfo(basename($_FILES["zoneOne"]["name"]),PATHINFO_EXTENSION): ""; 
-                                if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneOneOld;}
+                                //if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneOneOld;}
                                 break;
             case 'zoneOneAlt':   $advertObj->$postVar = basename($_FILES["zoneOneAlt"]["name"]) ? rand(100000, 1000000)."_zoneonealt".".".pathinfo(basename($_FILES["zoneOneAlt"]["name"]),PATHINFO_EXTENSION): ""; 
-                                if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneOneAltOld;}
+                                //if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneOneAltOld;}
                                 break;
             case 'zoneTwo':   $advertObj->$postVar = basename($_FILES["zoneTwo"]["name"]) ? rand(100000, 1000000)."_zonetwo".".".pathinfo(basename($_FILES["zoneTwo"]["name"]),PATHINFO_EXTENSION): ""; 
-                                if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneTwoOld;}
+                                //if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneTwoOld;}
                                 break;
             case 'zoneTwoAlt':   $advertObj->$postVar = basename($_FILES["zoneTwoAlt"]["name"]) ? rand(100000, 1000000)."_zonetwoalt".".".pathinfo(basename($_FILES["zoneTwoAlt"]["name"]),PATHINFO_EXTENSION): ""; 
-                                if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneTwoAltOld;}
+                                //if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneTwoAltOld;}
                                 break;
             case 'zoneThree':   $advertObj->$postVar = basename($_FILES["zoneThree"]["name"]) ? rand(100000, 1000000)."_zonethree".".".pathinfo(basename($_FILES["zoneThree"]["name"]),PATHINFO_EXTENSION): ""; 
-                                if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneThreeOld;}
+                                //if($advertObj->$postVar == "") {$advertObj->$postVar = $zoneThreeOld;}
                                 break;
             default :       $advertObj->$postVar = filter_input(INPUT_POST, $postVar) ? mysqli_real_escape_string($dbObj->connection, filter_input(INPUT_POST, $postVar)) :  ''; 
                             if($advertObj->$postVar === "") {array_push ($errorArr, "Please enter $postVar ");}
@@ -126,7 +127,26 @@ if(filter_input(INPUT_POST, "submit")!==NULL && filter_input(INPUT_POST, "action
         }
     }
     //If validated and not empty submit it to database
-    if(count($errorArr) < 1)   {if($advertObj->update($dbObj)==='success') {$msg = $thisPage->messageBox('Advert successfully Updated.', 'success');} else {$msg = $thisPage->messageBox('Advert update failed.', 'error');}}
+    if(count($errorArr) < 1)   {
+        //move_uploaded_file($_FILES["zoneOne"]["tmp_name"], MEDIA_FILES_PATH. $advertObj->zoneOne);
+        $postVars = array('background', 'zoneOne', 'zoneOneAlt', 'zoneTwo', 'zoneTwoAlt', 'zoneThree');
+
+        foreach ($postVars as $postVar){
+            switch ($postVar){
+                default:    if($advertObj->$postVar != "") {
+                                if(!file_exists(MEDIA_FILES_PATH.$advertObj->$postVar)){
+                                    move_uploaded_file($_FILES["$postVar"]["tmp_name"], MEDIA_FILES_PATH.$advertObj->$postVar);
+                                    if(file_exists(MEDIA_FILES_PATH.$old->$postVar)) unlink(MEDIA_FILES_PATH.$old->$postVar);
+                                } 
+                            } else{
+                                $advertObj->$postVar = $old->$postVar;
+                            }
+                            break;
+            }
+        }
+        if($advertObj->update($dbObj)==='success') { $msg = $thisPage->messageBox('Advert successfully Updated.', 'success'); } 
+        else {$msg = $thisPage->messageBox('Advert update failed.', 'error');}
+    }
     else{ $msg = $thisPage->showError($errorArr); }//Else show error messages
 }
 //Advert Activation button click handler
@@ -277,7 +297,7 @@ if(filter_input(INPUT_POST, "activate-advert")!==NULL){
                                 <br/>
                             </div>
                             <div id="table-all-adverts">
-                                <table class="table table-striped table-bordered">
+                                <table class="table table-striped table-bordered table-condensed">
                                     <thead>
                                     <tr>
                                       <th> ID </th>
