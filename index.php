@@ -1,3 +1,15 @@
+<?php
+session_start();
+include 'classes/WebPage.php'; //Set up page as a web page
+$thisPage = new WebPage('includes/constants.php');//Create new instance of webPage class
+
+$msg = ""; //Success or failure message 
+$errorArr = array(); //Array of errors
+
+$dbObj = new Database(); //create database object
+$advertObj = new Advert(); //Instantiate user class
+$advertObj->id = filter_input(INPUT_GET, "id") ? filter_input(INPUT_GET, "id") : '';
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,28 +48,31 @@
 
 <body>
     <div id="ca_banner2" class="ca_banner ca_banner2">
-        <div class="ca_slide ca_bg2">
+        <div class="ca_slide ca_bg2" style="background:#fff url(<?php echo $advertObj->id ? MEDIA_FILES_PATH1.Advert::getSingle($dbObj, "background", $advertObj->id): "images/bgSmall.jpg"; ?>) no-repeat top left; width:160px;">
             <div class="ca_zone ca_zone1"><!--Product Top-->
                     <div class="ca_wrap ca_wrap1">
-                            <img src="images/smallProduct1.png" class="ca_shown" alt=""/>
-                            <img src="images/smallProduct2.png" alt="" style="display:none;"/>
+                        <img src="<?php echo $advertObj->id ? MEDIA_FILES_PATH1.Advert::getSingle($dbObj, "zone_one", $advertObj->id): "images/smallProduct1.png"; ?>" class="ca_shown" alt=""/>
+                        <img src="<?php echo $advertObj->id ? MEDIA_FILES_PATH1.Advert::getSingle($dbObj, "zone_one_alt", $advertObj->id): "images/smallProduct2.png"; ?>" alt="" style="display:none;"/>
                     </div>
             </div>
             <div class="ca_zone ca_zone2"><!--Product Middle-->
                     <div class="ca_wrap ca_wrap2">
-                            <img src="images/smallProduct3.png" class="ca_shown" alt=""/>
-                            <img src="images/smallProduct4.png" alt="" style="display:none;"/>
+                        <img src="<?php echo $advertObj->id ? MEDIA_FILES_PATH1.Advert::getSingle($dbObj, "zone_two", $advertObj->id): "images/smallProduct3.png"; ?>" class="ca_shown" alt=""/>
+                        <img src="<?php echo $advertObj->id ? MEDIA_FILES_PATH1.Advert::getSingle($dbObj, "zone_two_alt", $advertObj->id): "images/smallProduct4.png"; ?>" alt="" style="display:none;"/>
                     </div>
             </div>
 
             <div class="ca_zone ca_zone3"><!--Product Middle-->
                     <div class="ca_wrap ca_wrap3">
-                            <img src="images/smallProduct10.png" class="ca_shown" alt=""/>
+                        <img src="<?php echo $advertObj->id ? MEDIA_FILES_PATH1.Advert::getSingle($dbObj, "zone_three", $advertObj->id): "images/smallProduct10.png"; ?>" class="ca_shown" alt=""/>
                     </div>
             </div>
         </div>
     </div>
-
+    <div class="footer">
+        <br/><br/>
+        <a href="<?php echo SITE_URL."operator/advert-manager"; ?>"> <<< Return</a>
+    </div>
 
 
 <!-- The JavaScript -->
@@ -97,7 +112,7 @@
 //                        ]
             ],
             total_steps	: 4,
-            speed 		: 2000
+            speed 		: 4000
         });
     });
 </script>

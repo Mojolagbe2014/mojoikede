@@ -6,7 +6,6 @@
 
 /*Custom Style for Second Banner*/
 .ca_banner2{ width:160px; height:600px; }
-.ca_bg2{ background:#fff url(../images/bgSmall.jpg) no-repeat top left; width:160px; }
 .ca_banner2 .ca_zone1{ top:10px; left:0px; }
 .ca_banner2 .ca_wrap1, /*They are the same size*/
 .ca_banner2 .ca_wrap2{ height:195px; }
