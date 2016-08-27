@@ -6,7 +6,7 @@ define("DB_USER","nst1_nigsemtra");
 define("DB_PASSWORD","Karobuto2013");
 define("DB_SERVER","localhost");
 */
-define("SITE_URL","http://localhost/advert/");
+define("SITE_URL","http://localhost/mojoikede/");
 define("DB_NAME","advert_manager");
 define("DB_USER","root");
 define("DB_PASSWORD","");

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.1.14
+-- version 4.5.2
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 07, 2016 at 12:51 PM
--- Server version: 5.6.17
--- PHP Version: 5.5.12
+-- Generation Time: Aug 27, 2016 at 12:30 AM
+-- Server version: 5.7.9
+-- PHP Version: 5.6.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -14,11 +14,42 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `advert-manager`
+-- Database: `advert_manager`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `advert`
+--
+
+DROP TABLE IF EXISTS `advert`;
+CREATE TABLE IF NOT EXISTS `advert` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `link` varchar(100) NOT NULL,
+  `format` varchar(100) NOT NULL,
+  `follow` tinyint(2) NOT NULL,
+  `status` tinyint(2) NOT NULL,
+  `background` varchar(100) NOT NULL,
+  `zone_one` varchar(100) NOT NULL,
+  `zone_one_alt` varchar(100) NOT NULL,
+  `zone_two` varchar(100) NOT NULL,
+  `zone_two_alt` varchar(100) NOT NULL,
+  `zone_three` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `advert`
+--
+
+INSERT INTO `advert` (`id`, `name`, `link`, `format`, `follow`, `status`, `background`, `zone_one`, `zone_one_alt`, `zone_two`, `zone_two_alt`, `zone_three`) VALUES
+(1, 'Testing Advert', 'http://www.mojolagbe.com', 'landscape', 0, 1, '436044_background.jpg', '800708_zoneone.png', '653739_zoneonealt.png', '144989_zonetwo.png', '983494_zonetwoalt.png', '228869_zonethree.png'),
+(2, 'Testing Advert2', 'http://www.mojolagbe.com', 'landscape', 0, 1, '564255_background.png', '881897_zoneone.png', '784586_zoneonealt.png', '963581_zonetwo.png', '941196_zonetwoalt.png', '624707_zonethree.png');
 
 -- --------------------------------------------------------
 
@@ -26,6 +57,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `adverts`
 --
 
+DROP TABLE IF EXISTS `adverts`;
 CREATE TABLE IF NOT EXISTS `adverts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(500) NOT NULL,
@@ -38,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `adverts` (
   `follow` varchar(30) NOT NULL,
   `status` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `adverts`
@@ -57,6 +89,7 @@ INSERT INTO `adverts` (`id`, `name`, `link`, `content`, `size`, `type`, `positio
 -- Table structure for table `users`
 --
 
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) CHARACTER SET latin1 DEFAULT NULL,
@@ -67,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `date_registered` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users`
