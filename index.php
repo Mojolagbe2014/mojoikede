@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <div id="leftBanner" data-current="0" data-length="2" data-all="1,3"></div>
+    <div id="leftBanner" data-current="0" data-length="2" data-all="1,2"></div><!-- data-all will contain fetch ids of adverts -->
     <div class="footer">
         <br/><br/>
         <a href="<?php echo $_SERVER['HTTP_REFERER']; ?>"> <<< Return</a>
